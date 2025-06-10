@@ -1,19 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-/**
- *
- * @author Adm
- */
-
-import java.sql.PreparedStatement;
 import java.sql.Connection;
-import javax.swing.JOptionPane;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 public class ProdutosDAO {
 
@@ -32,9 +22,17 @@ public class ProdutosDAO {
             prep.setInt(2, produto.getValor());
             prep.setString(3, produto.getStatus());
             prep.executeUpdate();
-            prep.close();
         } catch (SQLException erro) {
             JOptionPane.showMessageDialog(null, "Erro ao cadastrar produto: " + erro.getMessage());
+        } finally {
+            try {
+                if (prep != null)
+                    prep.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException ex) {
+                // Ignore
+            }
         }
     }
 
@@ -55,25 +53,20 @@ public class ProdutosDAO {
                 produto.setStatus(resultset.getString("status"));
                 listagem.add(produto);
             }
-
         } catch (SQLException erro) {
             JOptionPane.showMessageDialog(null, "Erro ao listar produtos: " + erro.getMessage());
+        } finally {
+            try {
+                if (prep != null)
+                    prep.close();
+                if (resultset != null)
+                    resultset.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException ex) {
+                // Ignore
+            }
         }
         return listagem;
-    }
-
-    public void venderProduto(int id) {
-        String sql = "UPDATE produtos SET status = ? WHERE id = ?";
-
-        try {
-            conn = new conectaDAO().connectDB();
-            prep = conn.prepareStatement(sql);
-            prep.setString(1, "Vendido");
-            prep.setInt(2, id);
-            prep.executeUpdate();
-            prep.close();
-        } catch (SQLException erro) {
-            JOptionPane.showMessageDialog(null, "Erro ao vender produto: " + erro.getMessage());
-        }
     }
 }
